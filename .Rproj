@@ -1,0 +1,21 @@
+Version: 1.0
+
+# Workspace: NO guardar/restaurar .RData automáticamente
+RestoreWorkspace: No
+SaveWorkspace: No
+
+# Historia
+AlwaysSaveHistory: Default
+
+# Encoding
+Encoding: UTF-8
+
+# Formateo
+LineEndingConversion: Posix
+StripTrailingWhitespace: Yes
+
+# Tipo de proyecto (impacta panel Build)
+BuildType: None        # o Package, Shiny, Website, etc.
+
+# knitr/rmarkdown
+AutoAppendNewline: Yes

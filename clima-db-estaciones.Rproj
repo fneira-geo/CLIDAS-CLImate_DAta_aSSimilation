@@ -1,0 +1,24 @@
+Version: 1.0
+
+RestoreWorkspace: No
+SaveWorkspace: No
+AlwaysSaveHistory: Yes
+
+EnableCodeIndexing: Yes
+UseSpacesForTab: Yes
+NumSpacesForTab: 4
+Encoding: UTF-8
+
+RnwWeave: Sweave
+LaTeX: pdfLaTeX
+
+AutoAppendNewline: Yes
+StripTrailingWhitespace: Yes
+
+UseNativePipeOperator: Yes
+
+QuitChildProcessesOnExit: Yes
+
+PythonType: virtualenv
+PythonVersion: 3.12.12
+PythonPath: C:/Users/fneira/.envs/global-env/Scripts/python.exe

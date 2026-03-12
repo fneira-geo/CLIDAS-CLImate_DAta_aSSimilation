@@ -1,0 +1,267 @@
+###############################################################################
+# GITIGNORE TEMPLATE — Geospatial Data Science (Python / R / GEE)
+###############################################################################
+
+###############################################################################
+# PYTHON
+###############################################################################
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+env/
+venv/
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-log.txt
+pip-delete-this-directory.txt
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Versión de Python local — versionar si el proyecto fija versión
+# !.python-version
+
+###############################################################################
+# R
+###############################################################################
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+
+# renv: ignorar binarios, mantener archivos de control
+renv/library/
+renv/staging/
+renv/sandbox/
+renv/python/
+# Estos deben versionarse:
+!renv/activate.R
+!renv/settings.json
+!renv/.gitignore
+
+*.Rcheck/
+Rplots.pdf
+
+###############################################################################
+# CONDA / MICROMAMBA
+###############################################################################
+.micromamba/
+.conda/
+# environment.yml NO se ignora — debe versionarse para reproducibilidad
+
+###############################################################################
+# JUPYTER / NOTEBOOKS
+###############################################################################
+.ipynb_checkpoints/
+*.nbconvert.*
+
+###############################################################################
+# GEOSPATIAL DATA
+###############################################################################
+
+# ── Raster ──────────────────────────────────────────────────────────────────
+*.tif
+*.tiff
+*.nc
+*.nc4
+*.hdf
+*.hdf5
+*.h5
+*.grib
+*.grib2
+*.img
+*.vrt
+*.ovr             # overviews/pirámides GDAL
+
+# ── Vector — ignorar por defecto, descomenta lo que quieras versionar ───────
+# Shapefiles (binarios + fragmentados, mejor versionar como GeoPackage)
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.sbn
+*.sbx
+
+# GeoPackage y GDB (binarios grandes)
+*.gpkg
+*.gdb/
+
+# GeoJSON y TopoJSON: el comentario original decía "keep" pero los ignoraba
+# Descomenta si quieres ignorarlos (son texto, en general conviene versionar)
+# *.geojson
+# *.topojson
+
+*.kml
+*.kmz
+
+# ── GEE ─────────────────────────────────────────────────────────────────────
+.config/earthengine/
+credentials           # token OAuth GEE en raíz
+
+# ── QGIS ────────────────────────────────────────────────────────────────────
+*.qgz~
+*.qgs~
+*.qlr
+*.qgd             # base de datos auxiliar QGIS
+
+###############################################################################
+# DATA (raw / large)
+###############################################################################
+
+# DuckDB — base de datos binaria, se regenera desde scripts
+*.duckdb
+*.duckdb.wal
+
+data/raw/
+data/tmp/
+*.parquet
+*.feather
+*.arrow
+*.zip
+*.gz
+*.tar
+*.7z
+*.rar
+*.pkl             # pickles de datos (no de modelos — ver sección ML)
+
+# Uncomment si no versionas CSVs:
+# *.csv
+
+###############################################################################
+# ML — MODELOS Y EXPERIMENTOS
+###############################################################################
+# Objetos serializados (pueden ser grandes)
+*.joblib
+*.pt              # PyTorch
+*.pth             # PyTorch alternativo
+*.onnx
+# *.rds           # descomenta si los modelos R son grandes
+# *.h5            # Keras — ya cubierto en raster, pero aplica acá también
+
+# Experimentos
+mlruns/           # MLflow
+wandb/            # Weights & Biases
+outputs/runs/     # HuggingFace Trainer
+
+# DVC (si usas versionado de datos/modelos)
+# *.dvc            # NO ignorar — son punteros que deben versionarse
+.dvc/cache/
+.dvc/tmp/
+
+###############################################################################
+# OUTPUTS
+###############################################################################
+# Figuras generadas (reproducibles desde código)
+outputs/figures/
+outputs/tables/
+# outputs/reports/  # descomenta si los reportes se generan automáticamente
+
+###############################################################################
+# OPERATING SYSTEMS
+###############################################################################
+# macOS
+.DS_Store
+.AppleDouble
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+ehthumbs.db
+
+# Linux
+.Trash-*
+*~
+
+###############################################################################
+# IDEs & EDITORS
+###############################################################################
+# VSCode — mantener settings y extensiones recomendadas
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json      # configuraciones de debug versionables
+
+# JetBrains / PyCharm / Positron (base JetBrains)
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Emacs
+*.swp
+*.swo
+\#*\#
+.#*
+
+###############################################################################
+# AI TOOLS & LLM ASSISTANTS
+###############################################################################
+.cursor/
+.continue/
+.copilot/
+.codeium/
+.gemini*/
+.openai*/
+.anthropic*/
+.aider*
+
+# Claude Code: ignorar estado interno pero versionar instrucciones del proyecto
+.claude/
+!CLAUDE.md        # instrucciones de proyecto para Claude Code — versionar
+
+###############################################################################
+# SECRETS & CREDENTIALS
+###############################################################################
+.env
+.env.*
+!.env.example     # plantilla sin valores reales — sí versionar
+.Renviron
+secrets.json
+*.pem
+*.key
+*service-account*.json
+*credentials*.json
+
+###############################################################################
+# LOGS & MISC
+###############################################################################
+*.log
+tmp/
+temp/
+.cache/
+
+# Vector DBs / embeddings locales
+.chroma/
+.pinecone/
+faiss_index/
+
+###############################################################################
+# LATEX / QUARTO (descomenta si generas documentos)
+###############################################################################
+# *.aux
+# *.bbl
+# *.blg
+# *.fdb_latexmk
+# *.fls
+# *.synctex.gz
+# *.out
+# *.toc
+# _freeze/          # caché de Quarto — reproducible, pero puede ignorarse
