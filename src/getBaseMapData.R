@@ -6,8 +6,9 @@
 
 
 # DIRECTORIOS -----------------------------------------------------------------
-.DIR_DATA_DPA_CL <- "D:/DATA/DPA_IDE_2023/"
-.DIR_DATA_GADM <- 'D:/DATA/GADM_limites/'
+readRenviron(".env")
+.DIR_DATA_DPA_CL <- Sys.getenv("DATA_DPA_CL")
+.DIR_DATA_GADM   <- Sys.getenv("DATA_GADM")
 
 library(tidyterra)
 dpa_chl <- terra::vect(
@@ -24,5 +25,3 @@ dpa_arg <- ''
 dpa_per <- ''
 dpa_bol <- ''
 
-
-plot(dpa_cl)

@@ -11,7 +11,7 @@ rm(list = ls())
 set.seed(12345)
 
 ## LIBRERIAS ------------------------------------------------------------------
-librerias <- c('dplyr', 'terra', 'duckdb')
+librerias <- c('dplyr', 'terra', 'tidyterra', 'duckdb')
 sapply(librerias, require, character.only = TRUE)
 
 
@@ -21,6 +21,7 @@ source("src/parser_dga.R")
 
 # source("src/test_parser_inia.R")
 # source("src/qc_duplicated_data.R")
+
 
 parser_dga <- function(ruta, variable = c("pp", "tn", "tx")) {
     ini <- "1990-01-01"
@@ -48,18 +49,15 @@ parser_dga <- function(ruta, variable = c("pp", "tn", "tx")) {
 
 
 ## DIRECTORIOS ----------------------------------------------------------------
+readRenviron(".env")
+DATA_RAW_DGA  <- Sys.getenv("DATA_RAW_DGA")
+DATA_RAW_INIA <- Sys.getenv("DATA_RAW_INIA")
+DATA_OUT      <- Sys.getenv("DATA_OUT")
 
-DATA_RAW_DGA <- "E:/SALIDAS/2026/FICHA_LOS_RIOS/RAW/DGA"
-DATA_RAW_INIA <- "E:/SALIDAS/2026/FICHA_LOS_RIOS/RAW/INIA-AGROMETEOROLOGIA"
 
-DATA_RAW_INIA <- "E:/SALIDAS/2026/FICHA_LOS_RIOS/RAW/INIA-AGROMETEOROLOGIA"
 
-DATA_OUT <- "E:/SALIDAS/2026/FICHA_LOS_RIOS/"
 
-# DATA_RAW_INIA <- '/Users/fneira/Documents/GITHUB/climate-db-inia/'
-# DATA_INIA_TEST <- "E:/SALIDAS/2026/FICHA_LOS_RIOS/RAW/test/los_rios__EXT-1010__fundo_el_maiten_paillaco_dmc_ALL_day_20160101-20251231.csv"
-# DATA_OUT <- ""
-
+## CODIGOS ---------------------------------------------------------------------
 # DGA LECTURA
 dga_tx <- parser_dga(file.path(DATA_RAW_DGA, "TEMPERATURAS"), variable = "tx")
 dga_tn <- parser_dga(file.path(DATA_RAW_DGA, "TEMPERATURAS"), variable = "tn")
@@ -72,37 +70,11 @@ meta_dga <- dplyr::bind_rows(
 ) |>
     dplyr::distinct()
 
-names(meta_dga)
-
-
-dga_tx |> dplyr::select(dplyr::all_of( unlist(meta_dga$nombre)))
-# aa <- parse_dga_pp(file.path(DATA_RAW_DGA, "PRECIPITACIONES"))
 
 # INIA LECTURA
-# inia_all <- parser_inia(ruta = DATA_RAW_INIA)
-# names(inia_all$data)
-
-source('src/test_parser_inia.R')
 inia_tx <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "TA_MAX")
 inia_tn <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "TA_MIN")
 inia_pp <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "PP_SUM")
-
-
-pivot_ancho <- function(data, nombres_desde, valores_desde, funciones = NULL){
-  tidyr::pivot_wider(
-    names_from = {{nombres_desde}},
-    values_from = {{valores_desde}},
-    values_fn = {{funciones}}
-  )
-}
-
-
-aa <- tidyr::pivot_wider(
-    data = inia_tn$data,
-    names_from = "SOURCE",
-    values_from = "TA_MIN",
-    values_fn = length
-) #|> unique()
 
 
 writexl::write_xlsx(

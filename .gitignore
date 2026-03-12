@@ -232,7 +232,8 @@ ehthumbs.db
 ###############################################################################
 .env
 .env.*
-!.env.example     # plantilla sin valores reales — sí versionar
+# plantilla sin valores reales — sí versionar
+!.env.example
 .Renviron
 secrets.json
 *.pem

@@ -1,46 +1,13 @@
 ## =============================================================================
-## parser_inia.R
+## test_parser_inia.R
 ## =============================================================================
 ## Propósito:
-##   Leer y normalizar los archivos CSV exportados desde la plataforma INIA
-##   (Red Agrometeorológica). Consolida todos los archivos de una carpeta en
-##   un único data.frame con nombres de columna estandarizados.
+##   Explorar el output de parser_inia() y entender qué transformaciones
+##   se necesitan para alinear su formato con el de parser_dga().
 ##
-## Formato de salida (equivalente a parser_dga):
-##   list(
-##     data = tibble con columnas:
-##              DATE, SOURCE, TA_MIN, TA_MAX, HR_AVG, PP_SUM, RD_AVG
-##              + QC: TA_MIN_QC, TA_MAX_QC, HR_AVG_QC, PP_SUM_QC, RD_AVG_QC
-##     meta = data.frame con columnas:
-##              source, region, id, nombre, date_from, date_to
-##   )
-##   La columna SOURCE en $data referencia la columna source en $meta.
-##
-## Nombre de archivo esperado:
-##   REGION__ID__ESTACION_ALL_day_YYYYMMDD-YYYYMMDD.csv
-##   Ejemplo: tarapaca__EXT-1012__colchane_colchane_dmc_ALL_day_20160101-20251231.csv
-##
-## Formato esperado de los CSV:
-##   - Separador: coma
-##   - Encabezado en fila 6 (skip = 5)
-##   - Fechas en columna "Tiempo UTC-4" con formato %d-%m-%Y
-##   - Decimales con punto, encoding UTF-8
-##
-## Dependencias: readr, purrr, dplyr, tools (base R)
+## Requiere en el ambiente: inia_all  (salida de parser_inia())
+## Corre de forma interactiva, bloque a bloque.
 ## =============================================================================
-
-# -- Funciones obsoletas / exploración previa ----------------------------------
-# Las funciones listar_csv, read_csv, classify_climate_cols, build_skeleton y
-# get_year_blocks, junto con el código suelto de prueba (lista, asdf, datos),
-# fueron reemplazados por parse_inia(). Se mantienen comentados por referencia.
-#
-# listar_csv <- function(ruta) { ... }
-# classify_climate_cols <- function(col_names) { ... }
-# read_csv <- function(lista) { ... }
-# build_skeleton <- function(meta, date_from, date_to) { ... }
-# get_year_blocks <- function(raw) { ... }
-# ------------------------------------------------------------------------------
-
 
 # Extrae metadatos desde el basename de un archivo INIA.
 # Formato: REGION__ID__ESTACION_ALL_day_YYYYMMDD-YYYYMMDD
@@ -63,7 +30,7 @@
 }
 
 
-parser_inia <- function(ruta) {
+.get_data_inia <- function(ruta) {
     localidad <- readr::locale(
         date_names = "es", date_format = "%d-%m-%Y", time_format = "",
         decimal_mark = ".", grouping_mark = ",",
@@ -102,7 +69,7 @@ parser_inia <- function(ruta) {
         ) |>
             dplyr::rename(dplyr::any_of(col_rename)) |>
             dplyr::mutate(SOURCE = tools::file_path_sans_ext(basename(path)), .before = 1)
-    }, .progress = list(name = "Leyendo INIA", type = "iterator")) |>
+    }, .progress = list(name = "Leyendo INIA", type = "tasks")) |>
         purrr::list_rbind()
 
     meta <- purrr::map(files, \(path) {
@@ -113,6 +80,57 @@ parser_inia <- function(ruta) {
     list(data = data, meta = meta)
 }
 
-# resultado <- parse_inia(DATA_RAW_INIA)  # prueba manual
+
+.pivot_ancho <- function(data, nombres_desde, valores_desde, funciones = NULL){
+  tidyr::pivot_wider(
+    data = data,
+    names_from = {{nombres_desde}},
+    values_from = {{valores_desde}},
+    values_fn = {{funciones}}
+  )
+}
+
+
+
+#df_wide <- df_long %>%
+#  tidyr::pivot_wider(
+#    names_from = variable_col,
+#    values_from = value_col,
+#    values_fn = mean # Agregación integrada
+#)
+
+
+
+
+parser_inia <- function(ruta, nom_var = c('TA_AVG', 'TA_MIN', 'TA_MAX', 'HR_AVG', 'HR_MIN', 'HR_MAX', 'PP_SUM', 'PS_AVG', 'RD_AVG', 'TS00_AVG', 'TS00_MIN', 'TS00_MAX', 'TS10_AVG', 'TS10_MIN', 'TS10_MAX', 'VV_AVG', 'VV_MAX', 'DV_AVG')){
+
+    nom_var <- match.arg(nom_var)
+
+    cols_siempre <- c("SOURCE", "DATE")
+
+    data <- .get_data_inia(ruta)
+
+    data_temporal <- data[["data"]][c(cols_siempre, nom_var)]
+
+    data[['data1']] <- data_temporal
+
+    data_temporal2 <- .pivot_ancho(
+        data = data_temporal,
+        nombres_desde = "SOURCE",
+        valores_desde = dplyr::select( dplyr::all_of(nom_var))
+    )
+
+    data[['data2']] <- data_temporal2
+
+    #ini <- min(data_temporal["DATE"])
+    #fin <- max(data_temporal["DATE"])
+
+    return(data)
+}
+
+
+
+print("TEST parser_inia: Revisar salida de parser_inia() para entender su estructura y qué transformaciones se necesitan para alinear su formato con el de parser_dga().")
+
 
 
