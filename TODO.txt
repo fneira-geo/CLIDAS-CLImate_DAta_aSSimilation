@@ -1,0 +1,37 @@
+GENERAR MAPAS DE CALOR RESPECTO A LAS ESTACIONES
+cantidad de datos disponibles entre 1990-2025
+usar division regional y fuente, para evitar mucho dato por region.
+en caso de ser necesario usar division provincial u otra.
+
+generar mapa de distribucion estaciones por fuente / region.
+
+EDA de estaciones, 
+HOJA1 = DATOS BRUTOS ESTACIONES
+HOJA2 = ANALISIS METRICAS ESTACIONES, CANTIDAD DATOS, VALORES MEDIOS MENSUALES (OMM 100)
+HOJA3 = DATOS RELLENADOS.
+
+GRAFICOS.
+FUENTE x REGION x VARIABLE. mismo formato.
+BOXPLOT DISTRIBUCION.
+
+
+
+TAREAS:
+asociar las coordenadas a las estaciones INIA. (debería estar en el NAS)
+eliminar duplicados en estaciones DGA.
+chequear que existe coincidencia entre dato-estación / metadato-estación
+calculo de valores medios mensuales con datos estaciones, estandar OMM
+evaluar si agregas datos GSOD a la base de datos, pero deberías hacer filtro calidad / relleno / agregación mensual antes. porque tienen hora UTC distinta.
+EDA (Analisis Exploratorio de Datos)
+climatol / relleno.
+
+POTENCIALES RESULTADOS
+mapa calor de datos disponibles para la region
+mapa estaciones / cantidad datos originales, usa el tamaño
+mapa valores medios mensuales por estación, usa el color
+
+RESULTADOS.
+ICTF marzo debería estar la base de datos lista rellenada, y primeras pruebas de modelos de interpolación.
+
+
+En el intertanto estaré viendo la base de datos que mencione.

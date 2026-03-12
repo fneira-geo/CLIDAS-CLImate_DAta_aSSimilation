@@ -10,6 +10,11 @@ rm(list = ls())
 ## OPTIONS --------------------------------------------------------------------
 set.seed(12345)
 
+## LIBRERIAS ------------------------------------------------------------------
+librerias <- c('dplyr', 'terra', 'duckdb')
+sapply(librerias, require, character.only = TRUE)
+
+
 ## FUNCIONES ------------------------------------------------------------------
 source("src/parser_inia.R")
 source("src/parser_dga.R")
@@ -60,11 +65,22 @@ dga_tx <- parser_dga(file.path(DATA_RAW_DGA, "TEMPERATURAS"), variable = "tx")
 dga_tn <- parser_dga(file.path(DATA_RAW_DGA, "TEMPERATURAS"), variable = "tn")
 dga_pp <- parser_dga(file.path(DATA_RAW_DGA, "PRECIPITACIONES"), variable = "pp")
 
+meta_dga <- dplyr::bind_rows(
+    dga_tx$meta,
+    dga_tn$meta,
+    dga_pp$meta
+) |>
+    dplyr::distinct()
+
+names(meta_dga)
+
+
+dga_tx |> dplyr::select(dplyr::all_of( unlist(meta_dga$nombre)))
 # aa <- parse_dga_pp(file.path(DATA_RAW_DGA, "PRECIPITACIONES"))
 
 # INIA LECTURA
-inia_all <- parser_inia(ruta = DATA_RAW_INIA)
-names(inia_all$data)
+# inia_all <- parser_inia(ruta = DATA_RAW_INIA)
+# names(inia_all$data)
 
 source('src/test_parser_inia.R')
 inia_tx <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "TA_MAX")
@@ -77,7 +93,7 @@ pivot_ancho <- function(data, nombres_desde, valores_desde, funciones = NULL){
     names_from = {{nombres_desde}},
     values_from = {{valores_desde}},
     values_fn = {{funciones}}
-  )  
+  )
 }
 
 
