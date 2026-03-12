@@ -11,7 +11,9 @@ rm(list = ls())
 set.seed(12345)
 
 ## LIBRERIAS ------------------------------------------------------------------
-librerias <- c('dplyr', 'terra', 'tidyterra', 'duckdb')
+librerias <- c('dplyr', 'tidyr', 'readr', 'purrr', 'readxl', 
+               'writexl', 'lubridate', 'stringr', 'terra', 
+               'tidyterra', 'ggplot2', 'duckdb')
 sapply(librerias, require, character.only = TRUE)
 
 
@@ -71,20 +73,24 @@ meta_dga <- dplyr::bind_rows(
     dplyr::distinct()
 
 
-# INIA LECTURA
+# INIA LECTURA Y OBTENCION DE DATOS DESDE ARCHIVOS
 inia_tx <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "TA_MAX")
 inia_tn <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "TA_MIN")
 inia_pp <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "PP_SUM")
+inia_hr <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "HR_AVG")
+inia_rd <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "RD_AVG")
+inia_ps <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "PS_AVG")
 
+# INIA ASOCIACION DE METADATA COORDENADAS GEOGRAFICAS
+
+## SALIDAS ---------------------------------------------------------------------
 
 writexl::write_xlsx(
     x = list(
         data_pp_dga = dga_pp$data,
-        meta_pp_dga = dga_pp$meta,
         data_tx_dga = dga_tx$data,
-        meta_tx_dga = dga_tx$meta,
         data_tn_dga = dga_tn$data,
-        meta_tn_dga = dga_tn$meta,
+        meta_dga = dga_tn$meta,
         data_pp_inia = inia_pp$data,
         data_tx_inia = inia_tx$data,
         data_tn_inia = inia_tn$data,

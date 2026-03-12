@@ -68,6 +68,7 @@
             )
         ) |>
             dplyr::rename(dplyr::any_of(col_rename)) |>
+            dplyr::filter(!is.na(DATE)) |>
             dplyr::mutate(SOURCE = tools::file_path_sans_ext(basename(path)), .before = 1)
     }, .progress = list(name = "Leyendo INIA", type = "tasks")) |>
         purrr::list_rbind()
@@ -81,12 +82,12 @@
 }
 
 
-.pivot_ancho <- function(data, nombres_desde, valores_desde, funciones = NULL){
+.pivot_ancho <- function(data, nombres_desde, valores_desde, funciones = mean){
   tidyr::pivot_wider(
     data = data,
-    names_from = {{nombres_desde}},
-    values_from = {{valores_desde}},
-    values_fn = {{funciones}}
+    names_from = dplyr::all_of(nombres_desde),
+    values_from = dplyr::all_of(valores_desde),
+    values_fn = funciones
   )
 }
 
@@ -110,15 +111,15 @@ parser_inia <- function(ruta, nom_var = c('TA_AVG', 'TA_MIN', 'TA_MAX', 'HR_AVG'
 
     data <- .get_data_inia(ruta)
 
-    data_temporal <- data[["data"]][c(cols_siempre, nom_var)]
+    data_temporal <- data[["data"]][c(cols_siempre, nom_var)] |> dplyr::distinct()
 
     data[['data1']] <- data_temporal
 
     data_temporal2 <- .pivot_ancho(
         data = data_temporal,
         nombres_desde = "SOURCE",
-        valores_desde = dplyr::select( dplyr::all_of(nom_var))
-    )
+        valores_desde = nom_var)
+    
 
     data[['data2']] <- data_temporal2
 
@@ -130,7 +131,6 @@ parser_inia <- function(ruta, nom_var = c('TA_AVG', 'TA_MIN', 'TA_MAX', 'HR_AVG'
 
 
 
-print("TEST parser_inia: Revisar salida de parser_inia() para entender su estructura y qué transformaciones se necesitan para alinear su formato con el de parser_dga().")
 
 
 

@@ -1,3 +1,6 @@
+readRenviron(".env")
+DATA_RAW_DGA  <- Sys.getenv("DATA_RAW_DGA")
+
 # Run this interactively to diagnose
 files <- list.files(
     file.path(DATA_RAW_DGA, "PRECIPITACIONES"),
