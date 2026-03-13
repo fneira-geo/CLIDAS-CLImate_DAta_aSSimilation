@@ -65,6 +65,20 @@ Por estación y mes/año:
 | Índice de aridez | P / ETP anual | Clasificación climática |
 | Período libre de heladas | Días entre última/primera helada | Planificación siembra |
 
+## Índices agroclimáticos (planificados)
+
+| Índice | Fórmula / Criterio | Variables | Uso |
+|--------|-------------------|-----------|-----|
+| GDD | `max(0, (TX + TN)/2 - Tbase)` acumulado, Tbase=10°C | TA_MIN, TA_MAX | Fenología cultivos |
+| ETP (Hargreaves) | `0.0023 × Ra × (Tmean + 17.8) × √(TX - TN)` | TA_MIN, TA_MAX, latitud | Demanda hídrica |
+| Días helada | `count(TN ≤ 0)` por mes/año | TA_MIN | Riesgo agrícola |
+| Días lluvia | `count(PP > 1 mm)` por mes/año | PP_SUM | Calendario labores |
+| Índice de aridez | `∑PP / ∑ETP` anual | PP_SUM, ETP | Clasificación climática |
+| Período libre heladas | Días entre última helada primavera – primera helada otoño | TA_MIN, DATE | Planificación siembra |
+
+> **Nota**: ETP Hargreaves requiere Ra (radiación extraterrestre), calculada con latitud + día del año. Si se dispone de radiación medida (RD_AVG) y humedad (HR_AVG), se puede usar Penman-Monteith simplificado.
+
+
 ## Uso rápido
 
 ```r
