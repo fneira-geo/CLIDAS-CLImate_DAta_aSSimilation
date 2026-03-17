@@ -241,7 +241,7 @@
 #' @param date_to   Fecha fin de la grilla de salida   (default "2021-12-31")
 #' @param verbose   Imprimir progreso en consola        (default TRUE)
 #' @return Lista con $data (data.frame fechas x estaciones) y $meta (metadatos)
-parser_dga_daily_pp <- function(path,
+.parser_dga_daily_pp <- function(path,
                                 date_from = "1990-01-01",
                                 date_to   = "2021-12-31",
                                 verbose   = TRUE) {
@@ -265,7 +265,7 @@ parser_dga_daily_pp <- function(path,
 #' @param date_to   Fecha fin de la grilla de salida   (default "2021-12-31")
 #' @param verbose   Imprimir progreso en consola        (default TRUE)
 #' @return Lista con $data (data.frame fechas x estaciones) y $meta (metadatos)
-parser_dga_daily_temp <- function(path,
+.parser_dga_daily_temp <- function(path,
                                   temp      = c("tx", "tn"),
                                   date_from = "1990-01-01",
                                   date_to   = "2021-12-31",
@@ -281,3 +281,36 @@ parser_dga_daily_temp <- function(path,
         verbose      = verbose
     )
 }
+
+
+
+
+
+parser_dga <- function(ruta,
+                       variable = c("pp", "tn", "tx"),
+                       ini = "1990-01-01",
+                       fin = "2025-12-31") {
+    #ini <- "1990-01-01"
+    #fin <- "2025-12-31"
+
+    variable <- match.arg(variable)
+
+    if (variable == "pp" ){
+        out <- .parser_dga_daily_pp(
+            path = ruta,
+            date_from = ini,
+            date_to   = fin,
+            verbose   = TRUE)
+    } else{
+        out <- .parser_dga_daily_temp(
+            path = ruta,
+            date_from = ini,
+            date_to   = fin,
+            verbose   = TRUE,
+            temp = variable)
+    }
+
+    return(out)
+}
+
+

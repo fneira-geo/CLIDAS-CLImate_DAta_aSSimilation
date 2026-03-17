@@ -15,5 +15,5 @@ TODO: (low) exportar base de datos a formato Parquet
 TODO: (medium) estadísticas anuales por estación (media, max, min, P05, P95)
 TODO: (low) índices agroclimáticos (GDD, ETP, días helada, días lluvia, aridez, período libre heladas)
 TODO: (low) actualizar README.md con estado actual del proyecto
-
+TODO: (low) actualizar README.md con ejemplo de enviroment directorios
 

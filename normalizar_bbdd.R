@@ -11,8 +11,8 @@ rm(list = ls())
 set.seed(12345)
 
 ## LIBRERIAS ------------------------------------------------------------------
-librerias <- c('dplyr', 'tidyr', 'readr', 'purrr', 'readxl', 
-               'writexl', 'lubridate', 'stringr', 'terra', 
+librerias <- c('dplyr', 'tidyr', 'readr', 'purrr', 'readxl',
+               'writexl', 'lubridate', 'stringr', 'terra',
                'tidyterra', 'ggplot2', 'duckdb')
 sapply(librerias, require, character.only = TRUE)
 
@@ -25,29 +25,29 @@ source("src/parser_dga.R")
 # source("src/qc_duplicated_data.R")
 
 
-parser_dga <- function(ruta, variable = c("pp", "tn", "tx")) {
-    ini <- "1990-01-01"
-    fin <- "2025-12-31"
-
-    variable <- match.arg(variable)
-
-    if (variable == "pp" ){
-        out <- parser_dga_daily_pp(
-            path = ruta,
-            date_from = ini,
-            date_to   = fin,
-            verbose   = TRUE)
-    } else{
-        out <- parser_dga_daily_temp(
-            path = ruta,
-            date_from = ini,
-            date_to   = fin,
-            verbose   = TRUE,
-            temp = variable)
-    }
-
-    return(out)
-}
+# parser_dga <- function(ruta, variable = c("pp", "tn", "tx")) {
+#     ini <- "1990-01-01"
+#     fin <- "2025-12-31"
+#
+#     variable <- match.arg(variable)
+#
+#     if (variable == "pp" ){
+#         out <- parser_dga_daily_pp(
+#             path = ruta,
+#             date_from = ini,
+#             date_to   = fin,
+#             verbose   = TRUE)
+#     } else{
+#         out <- parser_dga_daily_temp(
+#             path = ruta,
+#             date_from = ini,
+#             date_to   = fin,
+#             verbose   = TRUE,
+#             temp = variable)
+#     }
+#
+#     return(out)
+# }
 
 
 ## DIRECTORIOS ----------------------------------------------------------------
@@ -56,7 +56,7 @@ DATA_RAW_DGA  <- Sys.getenv("DATA_RAW_DGA")
 DATA_RAW_INIA <- Sys.getenv("DATA_RAW_INIA")
 DATA_OUT      <- Sys.getenv("DATA_OUT")
 
-
+META_XLSX_INIA <- "src/metadata_inia-agrometeorologia.xlsx"
 
 
 ## CODIGOS ---------------------------------------------------------------------
@@ -82,6 +82,13 @@ inia_rd <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "RD_AVG")
 inia_ps <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "PS_AVG")
 
 # INIA ASOCIACION DE METADATA COORDENADAS GEOGRAFICAS
+list.files(DATA_RAW_INIA)
+
+meta_inia <- readxl::read_excel(
+    path = META_XLSX_INIA,
+)
+
+
 
 ## SALIDAS ---------------------------------------------------------------------
 

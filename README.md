@@ -6,13 +6,13 @@ Base de datos climática de estaciones meteorológicas de Chile, orientada a con
 
 Consolidar datos de múltiples fuentes (DGA, INIA) en un esquema único almacenado en **DuckDB** y **Parquet**, con valores preprocesados listos para uso directo:
 
-- Estadísticas anuales (media, máximo, mínimo, percentiles 5 y 95)
-- Índices agroclimáticos calculados por estación
+-   Estadísticas anuales (media, máximo, mínimo, percentiles 5 y 95)
+-   Índices agroclimáticos calculados por estación
 
 ## Fuentes de datos
 
 | Fuente | Organismo | Variables | Formato original |
-|--------|-----------|-----------|-----------------|
+|----|----|----|----|
 | DGA | Dirección General de Aguas | Precipitación (PP), Tmax (TX), Tmin (TN) | XLS por estación |
 | INIA | Red Agrometeorológica | PP, TX, TN, Humedad relativa (HR), Radiación (RD) | CSV por estación |
 
@@ -20,7 +20,7 @@ Consolidar datos de múltiples fuentes (DGA, INIA) en un esquema único almacena
 
 ## Estructura del proyecto
 
-```
+```         
 clima-db-estaciones/
 ├── src/
 │   ├── parser_dga.R          # lectura y normalización de archivos DGA
@@ -35,7 +35,7 @@ clima-db-estaciones/
 
 ## Esquema de la base de datos
 
-```sql
+``` sql
 -- Observaciones diarias
 inia_data (DATE, SOURCE, TA_MIN, TA_MAX, HR_AVG, PP_SUM, RD_AVG,
            TA_MIN_QC, TA_MAX_QC, HR_AVG_QC, PP_SUM_QC, RD_AVG_QC)
@@ -48,27 +48,27 @@ inia_meta (source, region, id, nombre, date_from, date_to)
 
 Por estación y mes/año:
 
-| Estadístico | Descripción |
-|-------------|-------------|
-| Media histórica | Promedio del período completo |
-| Máximo / Mínimo | Valores extremos registrados |
-| P05 / P95 | Percentiles 5 y 95 (año seco / húmedo de referencia) |
+| Estadístico     | Descripción                                          |
+|-----------------|------------------------------------------------------|
+| Media histórica | Promedio del período completo                        |
+| Máximo / Mínimo | Valores extremos registrados                         |
+| P05 / P95       | Percentiles 5 y 95 (año seco / húmedo de referencia) |
 
 ## Índices agroclimáticos (planificados)
 
 | Índice | Descripción | Uso |
-|--------|-------------|-----|
+|----|----|----|
 | GDD | Grados-día de crecimiento (base 10 °C) | Fenología cultivos |
 | ETP | Evapotranspiración potencial (Hargreaves) | Demanda hídrica |
 | Días helada | Días con Tmin ≤ 0 °C | Riesgo agrícola |
-| Días lluvia | Días con PP > 1 mm | Calendario de labores |
+| Días lluvia | Días con PP \> 1 mm | Calendario de labores |
 | Índice de aridez | P / ETP anual | Clasificación climática |
 | Período libre de heladas | Días entre última/primera helada | Planificación siembra |
 
 ## Índices agroclimáticos (planificados)
 
 | Índice | Fórmula / Criterio | Variables | Uso |
-|--------|-------------------|-----------|-----|
+|----|----|----|----|
 | GDD | `max(0, (TX + TN)/2 - Tbase)` acumulado, Tbase=10°C | TA_MIN, TA_MAX | Fenología cultivos |
 | ETP (Hargreaves) | `0.0023 × Ra × (Tmean + 17.8) × √(TX - TN)` | TA_MIN, TA_MAX, latitud | Demanda hídrica |
 | Días helada | `count(TN ≤ 0)` por mes/año | TA_MIN | Riesgo agrícola |
@@ -78,10 +78,9 @@ Por estación y mes/año:
 
 > **Nota**: ETP Hargreaves requiere Ra (radiación extraterrestre), calculada con latitud + día del año. Si se dispone de radiación medida (RD_AVG) y humedad (HR_AVG), se puede usar Penman-Monteith simplificado.
 
-
 ## Uso rápido
 
-```r
+``` r
 library(DBI)
 library(duckdb)
 
@@ -106,16 +105,16 @@ dbDisconnect(con, shutdown = TRUE)
 
 ## Dependencias R
 
-```r
+``` r
 install.packages(c("duckdb", "DBI", "dplyr", "tidyr", "readr",
                    "readxl", "purrr", "writexl"))
 ```
 
 ## Entornos Python (reticulate)
 
-| Sistema | Gestor | Entorno |
-|---------|--------|---------|
-| Windows | UV | `global-env` |
-| macOS | micromamba | `geoenv` |
+| Sistema | Gestor     | Entorno      |
+|---------|------------|--------------|
+| Windows | UV         | `global-env` |
+| macOS   | micromamba | `geoenv`     |
 
 La ruta se selecciona automáticamente desde `.Rprofile`.
