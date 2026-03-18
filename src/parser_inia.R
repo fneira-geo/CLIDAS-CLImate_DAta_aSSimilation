@@ -39,6 +39,14 @@
     asciify = FALSE
   )
 
+  # Definimos los archivos a ignorar para mantener DRY
+  ignored_files <- c("manifest.csv", "extraction_stats.json")
+
+  # all_files <- list.files(DATA_RAW_INIA, recursive = TRUE, full.names = TRUE)
+  #
+  # # Filtrado por exclusión (Vectorizado)
+  # files_to_process <- all_files[!(basename(all_files) %in% ignored_files)]
+
   col_rename <- c(
     "DATE"      = "Tiempo UTC-4",
     "TA_MIN"    = "Temperatura del Aire Mínima ºC",
@@ -53,14 +61,13 @@
     "RD_AVG_QC" = "Radiación Solar % de datos "
   )
 
-  files <- list.files(ruta,
+  all_files <- list.files(ruta,
                       pattern = "\\.csv$",
                       recursive = TRUE,
-                      full.names = TRUE) |>
-    grep("manifest\\.csv$",
-         x = _,
-         value = TRUE,
-         invert = TRUE)
+                      full.names = TRUE)
+
+  files <- all_files[!(basename(all_files) %in% ignored_files)]
+
 
   if (length(files) == 0)
     stop("No se encontraron archivos CSV en: ", ruta)
@@ -73,6 +80,7 @@
         delim = ",",
         locale = localidad,
         show_col_types = FALSE,
+        progress = FALSE,
         col_types = readr::cols(
           .default = readr::col_double(),
           `Tiempo UTC-4` = readr::col_date(format = "%d-%m-%Y")
@@ -83,7 +91,8 @@
       dplyr::filter(!is.na(DATE)) |>
       dplyr::mutate(SOURCE = tools::file_path_sans_ext(basename(path)),
                     .before = 1)
-  }, .progress = list(name = "Leyendo INIA", type = "tasks")) |>
+  },  .progress = list(name = "Leyendo INIA", type = "tasks")) |>
+     #  .progress = FALSE ) |>
     purrr::list_rbind()
 
   meta <- purrr::map(files, \(path) {

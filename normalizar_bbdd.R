@@ -25,31 +25,6 @@ source("src/parser_dga.R")
 # source("src/qc_duplicated_data.R")
 
 
-# parser_dga <- function(ruta, variable = c("pp", "tn", "tx")) {
-#     ini <- "1990-01-01"
-#     fin <- "2025-12-31"
-#
-#     variable <- match.arg(variable)
-#
-#     if (variable == "pp" ){
-#         out <- parser_dga_daily_pp(
-#             path = ruta,
-#             date_from = ini,
-#             date_to   = fin,
-#             verbose   = TRUE)
-#     } else{
-#         out <- parser_dga_daily_temp(
-#             path = ruta,
-#             date_from = ini,
-#             date_to   = fin,
-#             verbose   = TRUE,
-#             temp = variable)
-#     }
-#
-#     return(out)
-# }
-
-
 ## DIRECTORIOS ----------------------------------------------------------------
 readRenviron(".env")
 DATA_RAW_DGA  <- Sys.getenv("DATA_RAW_DGA")
@@ -77,18 +52,23 @@ meta_dga <- dplyr::bind_rows(
 inia_tx <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "TA_MAX")
 inia_tn <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "TA_MIN")
 inia_pp <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "PP_SUM")
-inia_hr <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "HR_AVG")
-inia_rd <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "RD_AVG")
-inia_ps <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "PS_AVG")
+# inia_hr <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "HR_AVG")
+# inia_rd <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "RD_AVG")
+# inia_ps <- parser_inia(ruta = DATA_RAW_INIA, nom_var = "PS_AVG")
 
 # INIA ASOCIACION DE METADATA COORDENADAS GEOGRAFICAS
 list.files(DATA_RAW_INIA)
 
 meta_inia <- readxl::read_excel(
     path = META_XLSX_INIA,
-)
+) %>%
+    dplyr::mutate(
+    )
 
+get_data_inia(ruta = DATA_RAW_INIA)
 
+list.files(DATA_RAW_INIA, recursive = TRUE,
+           pattern = "manifest.csv|extraction_stats.json")
 
 ## SALIDAS ---------------------------------------------------------------------
 
